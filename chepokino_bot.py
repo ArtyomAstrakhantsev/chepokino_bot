@@ -3,17 +3,20 @@ import telebot
 from telebot import apihelper
 import config
 import socks5
+from telebot import types
 from get_film import get_film_info
-from specifications import create_specification
 
 
 bot = telebot.TeleBot(config.TOKEN)
-apihelper.proxy = {'https': 'socks5://217.182.230.15:4485'}
+apihelper.proxy = {'https': 'socks5://148.251.234.93:1080'}
 
 @bot.message_handler(commands=['start'])
 def welcome(message):
-    bot.send_message(message.chat.id, "Халлоу!)), {0.first_name}!\nЯ - <b>{1.first_name}</b>, бот созданный чтобы создавать посты!".format(message.from_user, bot.get_me()),
-        parse_mode='html')
+    markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
+    markup.add('Узнать интересное про фильм') #Имя кнопки
+    msg = bot.reply_to(message, "Халлоу!)), {0.first_name}!\nЯ - <b>{1.first_name}</b>, бот созданный чтобы создавать посты!".format(message.from_user, bot.get_me()),parse_mode='html')
+    bot.register_next_step_handler(msg, get_name_film)
+    
 
 @bot.message_handler(commands=['film'])
 def get_name_film(message):
@@ -22,6 +25,8 @@ def get_name_film(message):
     return message_film
 
 def create_post(message_film, message):
+    bot.send_message(message.chat.id, 'Теперь нужно подождать:) Обычно я думаю не больше 2-х минут:)')
+    bot.send_message(message.chat.id, 'Загрузка...')
     get_film_info(message_film)
     text_film = open('page_film.html', 'r', encoding='UTF-8')
     line = text_film.readlines()
@@ -38,19 +43,32 @@ def create_post(message_film, message):
     actor_five = line[10]
     description = line[11]
     text_film.close()
-    bot.send_message(message.chat.id, f"""Название:📍 {name}
-    Год:📆 {year}
-    Жанр: {genre_one}, {genre_two}
-    Продолжительность:⏱ {time}
-    Режиссер:🎥 {producer}
-    В главной роли:
-    ◼{actor_one}
-    ◼{actor_two}
-    ◼{actor_three}
-    ◼{actor_four}
-    ◼{actor_five}
-    Описание: 📝
-    {description}""")
+    bot.send_message(message.chat.id,
+    f"""Название:📍 {name}
+Жанр: {genre_one},{genre_two}
+Год выпуска:📆 {year}
+Продолжительность:⏱ {time}
+Режиссер:🎥 {producer}
+Оценка кинопоиск:🟢 
+
+Оценка IMDb:🟢
+
+В главной роли:
+◾{actor_one}
+◾{actor_two}
+◾{actor_three}
+◾{actor_four}
+◾{actor_five}
+Смотрите Трейлер здесь :)
+
+Описание:📝
+{description}
+Мнение автора:📝
+    
+#ЧеПоКино
+#Кино
+#{name}""")
+    bot.send_message(message.chat.id, 'Не благодарите😉')
 
 
 bot.polling(none_stop = True, interval = 0)
