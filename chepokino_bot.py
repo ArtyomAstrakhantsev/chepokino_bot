@@ -1,6 +1,5 @@
 import sys
 import telebot
-from telebot import apihelper
 import config
 import socks5
 from telebot import types
@@ -8,7 +7,6 @@ from get_film import get_film_info
 
 
 bot = telebot.TeleBot(config.TOKEN)
-apihelper.proxy = {'https': 'socks5://85.10.235.14:1080'}
 
 @bot.message_handler(commands=['start'])
 def welcome(message):
