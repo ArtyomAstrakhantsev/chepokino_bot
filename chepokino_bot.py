@@ -1,5 +1,6 @@
 import sys
 import telebot
+from telebot import apihelper
 import config
 import socks5
 from telebot import types
