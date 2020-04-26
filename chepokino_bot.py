@@ -8,7 +8,7 @@ from get_film import get_film_info
 
 
 bot = telebot.TeleBot(config.TOKEN)
-apihelper.proxy = {'https': 'socks5://148.251.234.93:1080'}
+apihelper.proxy = {'https': 'socks5://85.10.235.14:1080'}
 
 @bot.message_handler(commands=['start'])
 def welcome(message):
@@ -27,25 +27,25 @@ def get_name_film(message):
 def create_post(message_film, message):
     bot.send_message(message.chat.id, 'Теперь нужно подождать:) Обычно я думаю не больше 2-х минут:)')
     bot.send_message(message.chat.id, 'Загрузка...')
-    get_film_info(message_film)
-    text_film = open('page_film.html', 'r', encoding='UTF-8')
-    line = text_film.readlines()
-    name = line[0]
-    year = line[1]
-    genre_one = line[2]
-    genre_two = line[3]
-    time = line[4]
-    producer = line[5]
-    actor_one = line[6]
-    actor_two = line[7]
-    actor_three = line[8]
-    actor_four = line[9]
-    actor_five = line[10]
-    description = line[11]
-    text_film.close()
-    bot.send_message(message.chat.id,
-    f"""Название:📍 {name}
-Жанр: {genre_one},{genre_two}
+    if get_film_info(message_film) is True:
+        text_film = open('page_film.html', 'r', encoding='UTF-8')
+        line = text_film.readlines()
+        name = line[0]
+        year = line[1]
+        genre_one = line[2]
+        genre_two = line[3]
+        time = line[4]
+        producer = line[5]
+        actor_one = line[6]
+        actor_two = line[7]
+        actor_three = line[8]
+        actor_four = line[9]
+        actor_five = line[10]
+        description = line[11]
+        text_film.close()
+        bot.send_message(message.chat.id,
+f"""Название:📍 {name}
+Жанр: {genre_one}, {genre_two}
 Год выпуска:📆 {year}
 Продолжительность:⏱ {time}
 Режиссер:🎥 {producer}
@@ -59,7 +59,6 @@ def create_post(message_film, message):
 ◾{actor_three}
 ◾{actor_four}
 ◾{actor_five}
-Смотрите Трейлер здесь :)
 
 Описание:📝
 {description}
@@ -68,7 +67,8 @@ def create_post(message_film, message):
 #ЧеПоКино
 #Кино
 #{name}""")
-    bot.send_message(message.chat.id, 'Не благодарите😉')
-
+        bot.send_message(message.chat.id, 'Не благодарите😉')
+    else:
+        bot.send_message(message.chat.id, 'Я не смог найти фильм :(')
 
 bot.polling(none_stop = True, interval = 0)
